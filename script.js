@@ -105,10 +105,19 @@ const gameLogic = (function (
         if ((board.getBoard()[0][0] == board.getBoard()[0][1]) && (board.getBoard()[0][0] == board.getBoard()[0][2])) { //Top row entirely the same:
             declareWinner();
             return;
-        } else if ((board.getBoard()[0][0] == board.getBoard()[1][0]) && (board.getBoard()[0][0] == board.getBoard()[2][0])) { //Left columnentirely the same:
+        } else if ((board.getBoard()[0][1] == board.getBoard()[1][1]) && (board.getBoard()[0][1] == board.getBoard()[2][0])) { //Middle row entirely the same:
             declareWinner();
             return;
-        }  else if ((board.getBoard()[0][1] == board.getBoard()[0][0]) && (board.getBoard()[0][0] == board.getBoard()[2][0])) { //Middle column entirely the same:
+        }  else if ((board.getBoard()[0][2] == board.getBoard()[1][2]) && (board.getBoard()[0][2] == board.getBoard()[2][2])) { //Bottom row entirely the same:
+            declareWinner();
+            return;
+        }else if ((board.getBoard()[0][0] == board.getBoard()[1][0]) && (board.getBoard()[0][0] == board.getBoard()[2][0])) { //Left column entirely the same:
+            declareWinner();
+            return;
+        }  else if ((board.getBoard()[0][1] == board.getBoard()[1][1]) && (board.getBoard()[0][1] == board.getBoard()[2][1])) { //Middle column entirely the same:
+            declareWinner();
+            return;
+        } else if ((board.getBoard()[0][2] == board.getBoard()[1][2]) && (board.getBoard()[0][2] == board.getBoard()[2][2])) { //Right column entirely the same:
             declareWinner();
             return;
         } else if ((board.getBoard()[0][0] == board.getBoard()[1][1]) && (board.getBoard()[0][0] == board.getBoard()[2][2])) { //Left to right diagonal entirely the same:
@@ -122,7 +131,6 @@ const gameLogic = (function (
 
     switchTurn();
     board.consoleBoard();
-}
 
     return { getActivePlayer, playRound }
 }) ();
