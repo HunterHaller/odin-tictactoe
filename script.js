@@ -49,7 +49,7 @@ function gameBoard() {
 
 function gameLogic(
     playerXDefaultName = "Player X",
-    playerYDefaultName = "Player Y"
+    playerODefaultName = "Player O"
 ) {
 
     console.log("Game started, get ready!");
@@ -67,8 +67,8 @@ function gameLogic(
             token: "X"
         },
         {
-            name: playerYDefaultName,
-            token: "Y"
+            name: playerODefaultName,
+            token: "O"
         }
     ]
 
@@ -130,9 +130,11 @@ function gameLogic(
                 return;
             }
         } else if ((board.getBoard()[0][0] == board.getBoard()[1][0]) && (board.getBoard()[0][0] == board.getBoard()[2][0])) { //Left column entirely the same:
-            console.log("Victory by left column!")
-            declareWinner();
-            return;
+            if (board.getBoard()[0][0] !== 0) {
+                console.log("Victory by left column!")
+                declareWinner();
+                return;
+            }
         } else if ((board.getBoard()[0][1] == board.getBoard()[1][1]) && (board.getBoard()[0][1] == board.getBoard()[2][1])) { //Middle column entirely the same:
             if (board.getBoard()[0][1] !== 0) {
                 console.log("Victory by middle column!")
@@ -249,7 +251,7 @@ const displayControl = (function () {
 
     function updatePlayerNames(){
         let newXName = document.querySelector("#player-x-name").value;
-        let newYName = document.querySelector("#player-y-name").value;
+        let newYName = document.querySelector("#player-o-name").value;
 
         if (newXName){
             console.log("Player X name change detected!")
@@ -258,10 +260,10 @@ const displayControl = (function () {
             document.querySelector("#player-x-name").value = "";
         }
         if (newYName){
-            console.log("Player Y name change detected!")
+            console.log("Player O name change detected!")
             game.player[1].name = newYName;
             updateScreen();
-            document.querySelector("#player-y-name").value = "";
+            document.querySelector("#player-o-name").value = "";
         }
     }
 
