@@ -174,7 +174,7 @@ function gameLogic(
         gameOver = false;
     }
 
-    return { getActivePlayer, playRound, getGameState, restartGame, getBoard: board.getBoard }
+    return { player, getActivePlayer, playRound, getGameState, restartGame, getBoard: board.getBoard }
 };
 
 const displayControl = (function () {
@@ -247,6 +247,25 @@ const displayControl = (function () {
     screenBoard.addEventListener("click", clickHandler);
     document.querySelector("#restart-button").addEventListener("click", restartGame)
 
+    function updatePlayerNames(){
+        let newXName = document.querySelector("#player-x-name").value;
+        let newYName = document.querySelector("#player-y-name").value;
+
+        if (newXName){
+            console.log("Player X name change detected!")
+            game.player[0].name = newXName;
+            updateScreen();
+            document.querySelector("#player-x-name").value = "";
+        }
+        if (newYName){
+            console.log("Player Y name change detected!")
+            game.player[1].name = newYName;
+            updateScreen();
+            document.querySelector("#player-y-name").value = "";
+        }
+    }
+
+    document.querySelector("#name-change-button").addEventListener("click", updatePlayerNames)
 
     updateScreen();
 })();
