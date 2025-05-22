@@ -47,7 +47,7 @@ function gameBoard() {
 // This object tracks win conditions by monitoring the board? (Doesn't that then mean
 //      that the array must be public? Or is there a function to check for a win?)
 
-const gameLogic = (function (
+function gameLogic(
     playerXDefaultName = "Player X",
     playerYDefaultName = "Player Y"
 ) {
@@ -56,7 +56,10 @@ const gameLogic = (function (
 
     const board = gameBoard();
 
+    const victoryDeclaration = document.querySelector("#victory-declaration")
+
     let turnsPlayed = 0;
+    let gameOver = false;
 
     const player = [
         {
@@ -77,17 +80,24 @@ const gameLogic = (function (
 
     const switchTurn = () => {
         console.log("Switching turn!")
-        return activePlayer = (activePlayer === player[0]) ? player[1] : player[0];
+        console.log("Current active player is " + activePlayer.name + "...")
+        activePlayer = (activePlayer === player[0]) ? player[1] : player[0];
+        console.log("New current player is " + activePlayer.name + ", whose token is " + activePlayer.token)
+        return activePlayer;
     }
 
     const declareWinner = () => {
         console.log("Game Over! Player " + getActivePlayer().token + " wins!");
+        console.log("The final board:")
         board.consoleBoard();
+        victoryDeclaration.textContent = getActivePlayer().name + " wins! Wowee what a match!!!"
+        gameOver = true;
+        return;
     }
 
     const playRound = (i, j) => {
         //Assign player's token to [i][j]:
-        console.log("Trying to assign " + getActivePlayer().name + "'s token (" + getActivePlayer().token + ")");
+        console.log("Trying to assign " + getActivePlayer().name + "'s token (" + getActivePlayer().token + ") to space [" + i + "][" + j + "]");
 
         //Check for filled space:
         if (board.getBoard()[i][j] !== 0) {
@@ -98,49 +108,134 @@ const gameLogic = (function (
         board.playTurn(i, j, getActivePlayer().token);
         turnsPlayed++;
 
-
-
         //Check for game ending conditions:
 
         if ((board.getBoard()[0][0] == board.getBoard()[0][1]) && (board.getBoard()[0][0] == board.getBoard()[0][2])) { //Top row entirely the same:
+            if (board.getBoard()[0][0] !== 0) {
+                console.log("Victory by top row!")
+                declareWinner();
+                return;
+            }
+        } else if ((board.getBoard()[1][0] == board.getBoard()[1][1]) && (board.getBoard()[1][0] == board.getBoard()[1][2])) { //Middle row entirely the same:
+            if (board.getBoard()[1][0] !== 0) {
+                console.log("Victory by middle row!")
+                declareWinner();
+                return;
+            }
+        } else if ((board.getBoard()[2][0] == board.getBoard()[2][1]) && (board.getBoard()[2][1] == board.getBoard()[2][2])) { //Bottom row entirely the same:
+            if (board.getBoard()[2][0] !== 0) {
+                console.log("Victory by bottom row!")
+                declareWinner();
+                return;
+            }
+        } else if ((board.getBoard()[0][0] == board.getBoard()[1][0]) && (board.getBoard()[0][0] == board.getBoard()[2][0])) { //Left column entirely the same:
+            console.log("Victory by left column!")
             declareWinner();
             return;
-        } else if ((board.getBoard()[0][1] == board.getBoard()[1][1]) && (board.getBoard()[0][1] == board.getBoard()[2][0])) { //Middle row entirely the same:
-            declareWinner();
-            return;
-        }  else if ((board.getBoard()[0][2] == board.getBoard()[1][2]) && (board.getBoard()[0][2] == board.getBoard()[2][2])) { //Bottom row entirely the same:
-            declareWinner();
-            return;
-        }else if ((board.getBoard()[0][0] == board.getBoard()[1][0]) && (board.getBoard()[0][0] == board.getBoard()[2][0])) { //Left column entirely the same:
-            declareWinner();
-            return;
-        }  else if ((board.getBoard()[0][1] == board.getBoard()[1][1]) && (board.getBoard()[0][1] == board.getBoard()[2][1])) { //Middle column entirely the same:
-            declareWinner();
-            return;
+        } else if ((board.getBoard()[0][1] == board.getBoard()[1][1]) && (board.getBoard()[0][1] == board.getBoard()[2][1])) { //Middle column entirely the same:
+            if (board.getBoard()[0][1] !== 0) {
+                console.log("Victory by middle column!")
+                declareWinner();
+                return;
+            }
         } else if ((board.getBoard()[0][2] == board.getBoard()[1][2]) && (board.getBoard()[0][2] == board.getBoard()[2][2])) { //Right column entirely the same:
-            declareWinner();
-            return;
+            if (board.getBoard()[0][2] !== 0) {
+                declareWinner();
+                console.log("Victory by right column!")
+                return;
+            }
         } else if ((board.getBoard()[0][0] == board.getBoard()[1][1]) && (board.getBoard()[0][0] == board.getBoard()[2][2])) { //Left to right diagonal entirely the same:
+            if (board.getBoard()[0][0] !== 0) {
+                declareWinner();
+                console.log("Victory by left to right diagonal!")
+                return;
+            }
+        } else if ((board.getBoard()[0][2] == board.getBoard()[1][1]) && (board.getBoard()[0][2] == board.getBoard()[2][0])) { //Right to left diagonal entirely the same:
+            console.log("Victory by right to left diagonal!")
             declareWinner();
             return;
-        } else if ((board.getBoard()[0][2] == board.getBoard()[1][1]) && (board.getBoard()[0][2] == board.getBoard()[2][0])) { //Right to left diagonal entirely the same:
-            declareWinner();
+        } else if (turnsPlayed == 9) {//if no other win conditions are true AND it's been 9 turns (with no winner):
+            console.log("Game has gone too long, all spaces covered, nobody wins!!! TIE!!!!")
+            victoryDeclaration.textContent = "A TIE!!!"
+            gameOver = true;
             return;
         }
+        switchTurn();
+        board.consoleBoard();
+        console.log("Player has been switched and board displayed above!")
     }
 
-    switchTurn();
-    board.consoleBoard();
+    function getGameState() {
+        return gameOver;
+    }
 
-    return { getActivePlayer, playRound }
-}) ();
+    function restartGame() {
+        gameOver = false;
+    }
 
-gameLogic.playRound(0, 0)
-gameLogic.playRound(0, 0)
-gameLogic.playRound(1, 0)
-gameLogic.playRound(0, 1)
-gameLogic.playRound(2, 0)
-gameLogic.playRound(0, 2)
+    return { getActivePlayer, playRound, getGameState, restartGame, getBoard: board.getBoard }
+};
+
+const displayControl = (function () {
+    console.log("Display control function started!")
+
+    const game = gameLogic();
+    console.group("Game successfully started!")
+
+    const screenBoard = document.querySelector("#board");
+    const turnDeclaration = document.querySelector("#turn-declaration");
+
+    if (!screenBoard) {
+        console.log("screenBoard not created!")
+    }
+
+    const currentBoard = game.getBoard();
+    let activePlayer = game.getActivePlayer();
+    console.log("Activeplayer assigned for the first time, with name [" + activePlayer.name + "] and token " + activePlayer.token)
+
+    function updateScreen() {
+        console.log("Updating screen!")
+        //Wipe the board clean:
+        //screenBoard.textContent = "";
+
+        turnDeclaration.textContent = "It is now " + activePlayer.name + "'s turn!";
+    }
+
+    function clickHandler(e) {
+        if (game.getGameState() == true) {
+            console.log("Game is over, no more actions allowed!")
+            return;
+        }
+
+        const selectedCellX = e.target.dataset.xcoord;
+        const selectedCellY = e.target.dataset.ycoord;
+        if (!selectedCellX) {
+            console.log("No coordinates found!")
+            return;
+        }
+
+        e.target.textContent = activePlayer.token;
+        console.log("You clicked on cell [" + selectedCellX + "][" + selectedCellY + "]")
+        game.playRound(selectedCellX, selectedCellY);
+
+        activePlayer = game.getActivePlayer();
+        console.log("Updating player object in displayControl scope, with name [" + activePlayer.name + "] and token " + activePlayer.token);
+        updateScreen();
+    }
+    screenBoard.addEventListener("click", clickHandler);
+
+    updateScreen();
+})();
+
+//gameLogic.playRound(0, 0)
+//gameLogic.playRound(0, 0)
+//gameLogic.playRound(0, 2)
+//gameLogic.playRound(2, 2)
+//gameLogic.playRound(2, 1)
+//gameLogic.playRound(1, 0)
+//gameLogic.playRound(0, 1)
+//gameLogic.playRound(1, 1)
+//gameLogic.playRound(2, 0)
 
 // SCOPE TALK
 //  The only things that need to be visible, as seen also in the connect 4 example,
