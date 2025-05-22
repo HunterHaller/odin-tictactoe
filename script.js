@@ -181,8 +181,8 @@ const displayControl = (function () {
     console.log("Display control function started!")
 
     let sameSpot = false; //detects played rounds where the a previously played spot is clicked
-    const game = gameLogic();
-    console.group("Game successfully started!")
+    let game = gameLogic();
+    console.log("Game successfully started!")
 
     const screenBoard = document.querySelector("#board");
     const turnDeclaration = document.querySelector("#turn-declaration");
@@ -191,15 +191,12 @@ const displayControl = (function () {
         console.log("screenBoard not created!")
     }
 
-    const currentBoard = game.getBoard();
+    let currentBoard = game.getBoard();
     let activePlayer = game.getActivePlayer();
     console.log("Activeplayer assigned for the first time, with name [" + activePlayer.name + "] and token " + activePlayer.token)
 
     function updateScreen() {
         console.log("Updating screen!")
-        //Wipe the board clean:
-        //screenBoard.textContent = "";
-
         turnDeclaration.textContent = "It is now " + activePlayer.name + "'s turn!";
     }
 
@@ -229,7 +226,27 @@ const displayControl = (function () {
         }
         updateScreen();
     }
+
+    function restartGame() {
+        console.log("Resetting game!")
+        sameSpot = false;
+        game = gameLogic();
+        currentBoard = game.getBoard();
+        activePlayer = game.getActivePlayer();
+
+        let allCells = document.querySelectorAll(".ttt-cell")
+        allCells.forEach((textCell) => {
+            textCell.textContent = "";
+        });
+
+        document.querySelector("#victory-declaration").textContent = "";
+
+        updateScreen();
+    }
+
     screenBoard.addEventListener("click", clickHandler);
+    document.querySelector("#restart-button").addEventListener("click", restartGame)
+
 
     updateScreen();
 })();
