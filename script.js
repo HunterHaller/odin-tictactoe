@@ -102,9 +102,10 @@ function gameLogic(
         //Check for filled space:
         if (board.getBoard()[i][j] !== 0) {
             console.log("Hey, that space is already filled! Try again, pal!");
-            return;
+            return true;
         }
 
+        console.log("Unplayed spot detected, playing round!")
         board.playTurn(i, j, getActivePlayer().token);
         turnsPlayed++;
 
@@ -179,6 +180,7 @@ function gameLogic(
 const displayControl = (function () {
     console.log("Display control function started!")
 
+    let sameSpot = false; //detects played rounds where the a previously played spot is clicked
     const game = gameLogic();
     console.group("Game successfully started!")
 
@@ -214,12 +216,17 @@ const displayControl = (function () {
             return;
         }
 
-        e.target.textContent = activePlayer.token;
         console.log("You clicked on cell [" + selectedCellX + "][" + selectedCellY + "]")
-        game.playRound(selectedCellX, selectedCellY);
-
-        activePlayer = game.getActivePlayer();
-        console.log("Updating player object in displayControl scope, with name [" + activePlayer.name + "] and token " + activePlayer.token);
+        sameSpot = game.playRound(selectedCellX, selectedCellY);
+        console.log("sameSpot = " + sameSpot)
+        if (!sameSpot){
+            e.target.textContent = activePlayer.token;
+            activePlayer = game.getActivePlayer();
+            console.log("Updating player object in displayControl scope, with name [" + activePlayer.name + "] and token " + activePlayer.token);
+        } else if (sameSpot){
+            console.log("Player attempted to play on the same spot, nothing changed!");
+            sameSpot = false;
+        }
         updateScreen();
     }
     screenBoard.addEventListener("click", clickHandler);
